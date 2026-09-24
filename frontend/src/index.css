@@ -1,39 +1,18 @@
-/* Vague theme — https://github.com/vague-theme/vague */
 :root {
   color-scheme: dark;
-  --vague-black: #141415;
-  --vague-shadow: #1c1c24;
-  --vague-graphite: #252530;
-  --vague-onyx: #333738;
-  --vague-muted: #606079;
-  --vague-gray: #878787;
-  --vague-white: #cdcdcd;
-  --vague-yellow: #f3be7c;
-  --vague-red: #d8647e;
-  --vague-peach: #c48282;
-  --vague-blue: #6e94b2;
-  --vague-iris: #7e98e8;
-  --vague-green: #7fa563;
-  --vague-cyan: #aeaed1;
-  --vague-lilac: #c3c3d5;
-  --vague-mark: #405065;
-  --vague-cursor: #333738;
-
-  --bg: var(--vague-black);
-  --panel: var(--vague-shadow);
-  --border: var(--vague-graphite);
-  --text: var(--vague-white);
-  --muted: var(--vague-muted);
-  --accent: var(--vague-iris);
-  --dir: var(--vague-peach);
-  --file: var(--vague-lilac);
-  --mark: var(--vague-mark);
-  --cursor: var(--vague-cursor);
-  --error: var(--vague-red);
-
+  --bg: #0f0f10;
+  --panel: #161618;
+  --border: #2a2a2e;
+  --text: #e4e4e7;
+  --muted: #71717a;
+  --accent: #3b82f6;
+  --mark: #1e3a5f;
+  --cursor: #2563eb;
+  --dir: #fca5a5;
+  --file: #a1a1aa;
+  --error: #f87171;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 17px;
-  line-height: 1.45;
+  font-size: 14px;
 }
 
 * {
@@ -58,19 +37,13 @@ body,
 
 .path-bar,
 .status-bar,
-.prompt-line,
-.command-line {
-  padding: 0.45rem 0.85rem;
+.prompt-line {
+  padding: 0.35rem 0.75rem;
   background: var(--panel);
   border-bottom: 1px solid var(--border);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.path-bar {
-  color: var(--vague-cyan);
-  font-size: 0.95em;
 }
 
 .status-bar {
@@ -80,11 +53,11 @@ body,
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
   color: var(--muted);
-  font-size: 0.85em;
+  font-size: 12px;
 }
 
 .status-bar .tag {
-  color: var(--vague-green);
+  color: var(--accent);
   margin-right: 0.5rem;
 }
 
@@ -109,7 +82,6 @@ body,
   display: flex;
   flex-direction: column;
   border-right: 1px solid var(--border);
-  background: var(--bg);
 }
 
 .pane-preview {
@@ -119,11 +91,10 @@ body,
 .preview-body {
   flex: 1;
   overflow: auto;
-  padding: 0.35rem 0.5rem;
+  padding: 0.25rem 0;
   background: var(--panel);
   white-space: pre-wrap;
   word-break: break-word;
-  color: var(--vague-gray);
 }
 
 .preview-image {
@@ -135,13 +106,13 @@ body,
 .file-list {
   overflow: auto;
   margin: 0;
-  padding: 0.35rem 0;
+  padding: 0.25rem 0;
   list-style: none;
   flex: 1;
 }
 
 .file-list li {
-  padding: 0.2rem 0.65rem;
+  padding: 0.1rem 0.5rem;
   cursor: default;
   white-space: nowrap;
   overflow: hidden;
@@ -150,8 +121,7 @@ body,
 
 .file-list li.cursor {
   background: var(--cursor);
-  color: var(--vague-white);
-  box-shadow: inset 3px 0 0 var(--accent);
+  color: #fff;
 }
 
 .file-list li.marked {
@@ -168,19 +138,15 @@ body,
 
 .file-list .name.dir {
   color: var(--dir);
-  font-weight: 500;
 }
 
-.file-list li.cursor .name.dir {
-  color: var(--vague-yellow);
+.file-list li.cursor .name.dir,
+.file-list li.cursor .name.file {
+  color: inherit;
 }
 
 .file-list .name.file {
   color: var(--file);
-}
-
-.file-list li.cursor .name.file {
-  color: var(--vague-white);
 }
 
 .file-list .meta {
@@ -191,16 +157,13 @@ body,
   display: flex;
   gap: 0.5rem;
   border-top: 1px solid var(--border);
-  border-bottom: none;
 }
 
-.prompt-line span,
-.command-line span {
+.prompt-line span {
   color: var(--accent);
 }
 
-.prompt-line input,
-.command-line input {
+.prompt-line input {
   flex: 1;
   background: transparent;
   border: none;
@@ -210,25 +173,35 @@ body,
 }
 
 .command-foot {
-  background: var(--vague-black);
+  background: var(--bg);
   border-top: 1px solid var(--border);
 }
 
 .command-line {
   display: flex;
   gap: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  background: #0b0b0c;
   border-bottom: 1px solid var(--border);
-  background: var(--vague-graphite);
 }
 
-.command-line input::placeholder {
-  color: var(--vague-muted);
+.command-line span {
+  color: var(--accent);
+}
+
+.command-line input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font: inherit;
+  outline: none;
 }
 
 .shell-output {
-  max-height: 8rem;
+  max-height: 6rem;
   overflow: auto;
-  padding: 0.35rem 0.85rem 0.5rem;
+  padding: 0.35rem 0.75rem;
 }
 
 .shell-output pre {
@@ -236,11 +209,11 @@ body,
   white-space: pre-wrap;
   word-break: break-word;
   font: inherit;
-  font-size: 0.9em;
+  font-size: 12px;
 }
 
 .shell-stdout {
-  color: var(--vague-gray);
+  color: var(--muted);
 }
 
 .shell-stderr {
@@ -250,7 +223,7 @@ body,
 .help-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(20, 20, 21, 0.88);
+  background: rgba(0, 0, 0, 0.75);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -269,11 +242,9 @@ body,
 .help-panel h2 {
   margin: 0 0 0.75rem;
   font-size: 1rem;
-  color: var(--accent);
 }
 
 .help-panel pre {
   margin: 0;
   line-height: 1.5;
-  color: var(--vague-gray);
 }
