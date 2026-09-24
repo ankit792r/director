@@ -43,10 +43,7 @@ export function EntryColumn({
                 .filter(Boolean)
                 .join(' ')}
             >
-              <span class={`name ${ent.isDir ? 'dir' : 'file'}`}>
-                {ent.isDir ? '▸ ' : '▫ '}
-                {ent.name}
-              </span>
+              <span class={`name ${ent.isDir ? 'dir' : 'file'}`}>{ent.name}</span>
             </li>
           )
         })

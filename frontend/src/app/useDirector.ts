@@ -306,9 +306,19 @@ export function useDirector() {
           break
         case 'shell': {
           const res = await runShell(cwd, value)
+          dispatch({
+            type: 'patch',
+            patch: {
+              shellOutput: {
+                stdout: res.stdout,
+                stderr: res.stderr,
+                exitCode: res.exitCode,
+              },
+            },
+          })
           setStatus(
-            res.stderr || res.stdout || `exit ${res.exitCode}`,
-            res.exitCode !== 0 ? `exit ${res.exitCode}` : null,
+            res.exitCode === 0 ? 'ok' : `exit ${res.exitCode}`,
+            res.exitCode !== 0 ? res.stderr || `exit ${res.exitCode}` : null,
           )
           break
         }
@@ -395,6 +405,9 @@ export function useDirector() {
     const onKey = (ev: KeyboardEvent) => {
       const s = stateRef.current
       if (s.commandOpen) {
+        if (s.commandMode === 'shell') {
+          return
+        }
         if (ev.key === 'Escape') {
           dispatch({ type: 'patch', patch: { commandOpen: false, commandValue: '' } })
           ev.preventDefault()
@@ -505,10 +518,16 @@ export function useDirector() {
           prevent()
           break
         case ':':
+          dispatch({ type: 'patch', patch: { shellOutput: null } })
+          openCommand('shell')
+          prevent()
+          break
+        case '>':
           openCommand('path')
           prevent()
           break
         case '!':
+          dispatch({ type: 'patch', patch: { shellOutput: null } })
           openCommand('shell')
           prevent()
           break

@@ -27,6 +27,7 @@ export type AppState = {
   commandOpen: boolean
   commandValue: string
   commandMode: 'path' | 'shell' | 'rename' | 'mkdir' | 'create' | 'filter'
+  shellOutput: { stdout: string; stderr: string; exitCode: number } | null
   helpOpen: boolean
   history: string[]
   historyIndex: number
@@ -56,6 +57,7 @@ export const initialState: AppState = {
   commandOpen: false,
   commandValue: '',
   commandMode: 'path',
+  shellOutput: null,
   helpOpen: false,
   history: [],
   historyIndex: -1,

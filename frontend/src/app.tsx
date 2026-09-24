@@ -9,29 +9,33 @@ export function App() {
   const { state, entries, current, dispatch, runCommand } = useDirector()
   const listRef = useRef<HTMLUListElement>(null)
   const cmdRef = useRef<HTMLInputElement>(null)
+  const shellRef = useRef<HTMLInputElement>(null)
   const home = state.home
 
+  const isShellBar = state.commandOpen && state.commandMode === 'shell'
+  const isPrompt =
+    state.commandOpen && state.commandMode !== 'shell'
+
   useEffect(() => {
-    if (state.commandOpen) cmdRef.current?.focus()
-  }, [state.commandOpen])
+    if (isShellBar) shellRef.current?.focus()
+    if (isPrompt) cmdRef.current?.focus()
+  }, [isShellBar, isPrompt, state.commandMode])
 
   useEffect(() => {
     const el = listRef.current?.querySelector('li.cursor')
     el?.scrollIntoView({ block: 'nearest' })
   }, [state.cursor, state.cwd, state.filter])
 
-  const commandLabel =
+  const promptLabel =
     state.commandMode === 'path'
-      ? ':'
-      : state.commandMode === 'shell'
-        ? '!'
-        : state.commandMode === 'rename'
-          ? 'rename'
-          : state.commandMode === 'mkdir'
-            ? 'mkdir'
-            : state.commandMode === 'create'
-              ? 'new file'
-              : 'filter'
+      ? '>'
+      : state.commandMode === 'rename'
+        ? 'rename'
+        : state.commandMode === 'mkdir'
+          ? 'mkdir'
+          : state.commandMode === 'create'
+            ? 'new file'
+            : 'filter'
 
   const pos =
     entries.length > 0 ? `${state.cursor + 1}/${entries.length}` : '0/0'
@@ -40,9 +44,7 @@ export function App() {
     <div class="director" tabIndex={0}>
       <div class="path-bar">{shortenPath(state.cwd, home) || '~'}</div>
 
-      <div
-        class={`tri-pane ${state.previewOpen ? '' : 'no-preview'}`}
-      >
+      <div class={`tri-pane ${state.previewOpen ? '' : 'no-preview'}`}>
         <section class="pane pane-parent" aria-label="Parent directory">
           <EntryColumn
             entries={state.parentEntries}
@@ -81,13 +83,9 @@ export function App() {
         )}
       </div>
 
-      {state.config?.keymapHints !== false && (
-        <div class="hint">? help · h parent · l enter · y/x/p · q quit</div>
-      )}
-
-      {state.commandOpen && (
-        <div class="command-line">
-          <span>{commandLabel}</span>
+      {isPrompt && (
+        <div class="prompt-line">
+          <span>{promptLabel}</span>
           <input
             ref={cmdRef}
             value={state.commandValue}
@@ -127,6 +125,58 @@ export function App() {
           {state.status ? ` · ${state.status}` : ''}
         </span>
       </div>
+
+      {(isShellBar || state.shellOutput) && (
+        <footer class="command-foot">
+          {isShellBar && (
+            <div class="command-line">
+              <span>:</span>
+              <input
+                ref={shellRef}
+                value={state.commandValue}
+                placeholder="shell command…"
+                onInput={(e) =>
+                  dispatch({
+                    type: 'patch',
+                    patch: {
+                      commandValue: (e.target as HTMLInputElement).value,
+                    },
+                  })
+                }
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    void runCommand()
+                    e.preventDefault()
+                  }
+                  if (e.key === 'Escape') {
+                    dispatch({
+                      type: 'patch',
+                      patch: { commandOpen: false, commandValue: '' },
+                    })
+                    e.preventDefault()
+                  }
+                }}
+              />
+            </div>
+          )}
+
+          {state.shellOutput && (
+            <div class="shell-output">
+              {state.shellOutput.stdout ? (
+                <pre class="shell-stdout">{state.shellOutput.stdout}</pre>
+              ) : null}
+              {state.shellOutput.stderr ? (
+                <pre class="shell-stderr">{state.shellOutput.stderr}</pre>
+              ) : null}
+              {state.shellOutput.exitCode !== 0 &&
+              !state.shellOutput.stderr &&
+              !state.shellOutput.stdout ? (
+                <pre class="shell-stderr">exit {state.shellOutput.exitCode}</pre>
+              ) : null}
+            </div>
+          )}
+        </footer>
+      )}
 
       {state.helpOpen && (
         <div
