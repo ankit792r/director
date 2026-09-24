@@ -1,7 +1,12 @@
 package main
 
-import "fmt"
+import (
+	"director/backbone/command"
+	"os"
+)
 
 func main() {
-	fmt.Println("Hello, World!")
+	if err := command.Execute(); err != nil {
+		os.Exit(1)
+	}
 }
