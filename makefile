@@ -56,5 +56,5 @@ test:
 
 clean:
 	rm -f "$(BIN)"
-	rm -rf "$(ROOT)/bonefire/webview/output"
+	rm -rf "$(ROOT)/backbone/webview/output"
 	rm -rf "$(ROOT)/frontend/node_modules"

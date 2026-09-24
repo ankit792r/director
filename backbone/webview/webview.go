@@ -26,7 +26,7 @@ func OpenUi() {
 	if os.Getenv("DIRECTOR_DEV") != "1" {
 		addr, err := loadUi()
 		if err != nil {
-			log.Fatalf("Faield to load Static UI: %w", err)
+			log.Fatalf("Failed to load static UI: %v", err)
 		}
 		url = "http://" + addr
 	}
@@ -35,7 +35,7 @@ func OpenUi() {
 	w.Run()
 }
 
-// go:embed output
+//go:embed output
 var uiOutput embed.FS
 
 func loadUi() (string, error) {
