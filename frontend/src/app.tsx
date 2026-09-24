@@ -1,12 +1,12 @@
-import { Fragment } from 'preact'
 import { useEffect, useRef } from 'preact/hooks'
+import type { RefObject } from 'preact'
 import { useDirector } from './app/useDirector.ts'
 import { shortenPath } from './app/state.ts'
 import { HELP_LINES } from './keymap/help.ts'
+import { EntryColumn, RightPreview } from './components/Panels.tsx'
 
 export function App() {
-  const { state, entries, current, dispatch, runCommand, formatSize } =
-    useDirector()
+  const { state, entries, current, dispatch, runCommand } = useDirector()
   const listRef = useRef<HTMLUListElement>(null)
   const cmdRef = useRef<HTMLInputElement>(null)
   const home = state.home
@@ -33,58 +33,56 @@ export function App() {
               ? 'new file'
               : 'filter'
 
+  const pos =
+    entries.length > 0 ? `${state.cursor + 1}/${entries.length}` : '0/0'
+
   return (
     <div class="director" tabIndex={0}>
-      <div class="path-bar">{shortenPath(state.cwd, home) || '…'}</div>
+      <div class="path-bar">{shortenPath(state.cwd, home) || '~'}</div>
 
-      <div class={`main ${state.previewOpen ? '' : 'preview-off'}`}>
-        <ul class="file-list" ref={listRef}>
+      <div
+        class={`tri-pane ${state.previewOpen ? '' : 'no-preview'}`}
+      >
+        <section class="pane pane-parent" aria-label="Parent directory">
+          <EntryColumn
+            entries={state.parentEntries}
+            variant="parent"
+            highlightPath={state.cwd}
+            emptyLabel={state.parent ? '…' : '·'}
+          />
+        </section>
+
+        <section class="pane pane-center" aria-label="Current directory">
           {state.loading && entries.length === 0 ? (
-            <li class="meta">loading…</li>
-          ) : entries.length === 0 ? (
-            <li class="meta">empty</li>
+            <ul class="file-list column-center">
+              <li class="meta">loading…</li>
+            </ul>
           ) : (
-            entries.map((ent, i) => (
-              <li
-                key={ent.path}
-                class={`${i === state.cursor ? 'cursor' : ''} ${state.marked.has(ent.path) ? 'marked' : ''}`}
-              >
-                <span class={`name ${ent.isDir ? 'dir' : ''}`}>
-                  {ent.name}
-                  {ent.linkTarget ? ` → ${ent.linkTarget}` : ''}
-                </span>
-                <span class="meta">{ent.isDir ? 'dir' : formatSize(ent.size)}</span>
-                <span class="meta">{ent.mode}</span>
-              </li>
-            ))
+            <EntryColumn
+              entries={entries}
+              variant="center"
+              cursor={state.cursor}
+              marked={state.marked}
+              listRef={listRef as RefObject<HTMLUListElement>}
+            />
           )}
-        </ul>
+        </section>
 
         {state.previewOpen && (
-          <div class="preview">
-            {!current ? (
-              <span class="meta">no selection</span>
-            ) : state.preview?.kind === 'image' && state.preview.base64 ? (
-              <img
-                alt=""
-                src={`data:${state.preview.mime ?? 'image/png'};base64,${state.preview.base64}`}
+          <section class="pane pane-preview" aria-label="Preview">
+            <div class="preview-body">
+              <RightPreview
+                entries={state.rightEntries}
+                preview={state.preview}
+                isDir={state.rightIsDir}
               />
-            ) : state.preview?.kind === 'text' ? (
-              <Fragment>
-                {state.preview.text}
-                {state.preview.truncated ? '\n… truncated' : ''}
-              </Fragment>
-            ) : state.preview?.kind === 'directory' ? (
-              'directory'
-            ) : (
-              <span class="meta">binary or unreadable</span>
-            )}
-          </div>
+            </div>
+          </section>
         )}
       </div>
 
       {state.config?.keymapHints !== false && (
-        <div class="hint">? help · j/k move · y/x/p · d trash · : path · q quit</div>
+        <div class="hint">? help · h parent · l enter · y/x/p · q quit</div>
       )}
 
       {state.commandOpen && (
@@ -110,14 +108,24 @@ export function App() {
       )}
 
       <div class={`status-bar ${state.error ? 'error' : ''}`}>
-        {state.error ??
-          state.status ??
-          (state.marked.size
-            ? `${state.marked.size} marked`
-            : current?.name ?? '')}
-        {state.clipboard
-          ? ` · ${state.clipboard.mode} ${state.clipboard.paths.length}`
-          : ''}
+        <span class="status-left">
+          {state.error ? (
+            state.error
+          ) : (
+            <>
+              <span class="tag">NOR</span>
+              {current?.name ?? '—'}
+            </>
+          )}
+        </span>
+        <span class="status-right">
+          {current?.mode ?? ''}
+          {current ? ` · ${pos}` : ''}
+          {state.clipboard
+            ? ` · ${state.clipboard.mode} ${state.clipboard.paths.length}`
+            : ''}
+          {state.status ? ` · ${state.status}` : ''}
+        </span>
       </div>
 
       {state.helpOpen && (

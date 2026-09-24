@@ -46,14 +46,75 @@ export function useDirector() {
     dispatch({ type: 'patch', patch: { status, error } })
   }
 
-  const loadPreview = useCallback(async (path: string) => {
+  const loadRightPanel = useCallback(
+    async (ent: Entry | undefined, previewOpen?: boolean) => {
+      const open = previewOpen ?? stateRef.current.previewOpen
+      if (!ent || !open) {
+        dispatch({
+          type: 'patch',
+          patch: { rightEntries: [], preview: null, rightIsDir: false },
+        })
+        return
+      }
+    if (ent.isDir) {
+      try {
+        const s = stateRef.current
+        const resp = await listDir(
+          ent.path,
+          s.showHidden,
+          s.sortBy,
+          s.sortDesc,
+        )
+        dispatch({
+          type: 'patch',
+          patch: {
+            rightEntries: resp.entries,
+            preview: null,
+            rightIsDir: true,
+          },
+        })
+      } catch {
+        dispatch({
+          type: 'patch',
+          patch: { rightEntries: [], preview: null, rightIsDir: true },
+        })
+      }
+      return
+    }
     try {
-      const preview = await readPreview(path)
-      dispatch({ type: 'patch', patch: { preview } })
+      const preview = await readPreview(ent.path)
+      dispatch({
+        type: 'patch',
+        patch: { preview, rightEntries: [], rightIsDir: false },
+      })
     } catch {
-      dispatch({ type: 'patch', patch: { preview: null } })
+      dispatch({
+        type: 'patch',
+        patch: { preview: null, rightEntries: [], rightIsDir: false },
+      })
     }
   }, [])
+
+  const loadParentPanel = useCallback(async (parentPath: string) => {
+    const s = stateRef.current
+    if (!parentPath) {
+      dispatch({ type: 'patch', patch: { parentEntries: [] } })
+      return
+    }
+    try {
+      const resp = await listDir(
+        parentPath,
+        s.showHidden,
+        s.sortBy,
+        s.sortDesc,
+      )
+      dispatch({ type: 'patch', patch: { parentEntries: resp.entries } })
+    } catch {
+      dispatch({ type: 'patch', patch: { parentEntries: [] } })
+    }
+  },
+  [],
+)
 
   const loadDir = useCallback(
     async (path: string, pushHistory = true) => {
@@ -79,10 +140,9 @@ export function useDirector() {
             historyIndex,
           },
         })
+        void loadParentPanel(resp.parent)
         const first = resp.entries[0]
-        if (first && stateRef.current.previewOpen) {
-          void loadPreview(first.path)
-        }
+        if (first) void loadRightPanel(first)
       } catch (err) {
         dispatch({
           type: 'patch',
@@ -93,10 +153,17 @@ export function useDirector() {
         })
       }
     },
-    [loadPreview],
+    [loadRightPanel, loadParentPanel],
   )
 
-  const refresh = () => loadDir(stateRef.current.cwd, false)
+  const refresh = async () => {
+    const s = stateRef.current
+    await loadDir(s.cwd, false)
+    const s2 = stateRef.current
+    await loadParentPanel(s2.parent)
+    const ent = visibleEntries(s2)[s2.cursor]
+    if (ent) await loadRightPanel(ent)
+  }
 
   useEffect(() => {
     void (async () => {
@@ -129,7 +196,7 @@ export function useDirector() {
     const next = Math.max(0, Math.min(entries.length - 1, state.cursor + delta))
     dispatch({ type: 'patch', patch: { cursor: next } })
     const ent = entries[next]
-    if (ent && state.previewOpen) void loadPreview(ent.path)
+    if (ent) void loadRightPanel(ent)
   }
 
   const goParent = () => {
@@ -461,10 +528,14 @@ export function useDirector() {
           openCommand('rename', current?.name ?? '')
           prevent()
           break
-        case 'P':
-          dispatch({ type: 'patch', patch: { previewOpen: !s.previewOpen } })
+        case 'P': {
+          const nextOpen = !s.previewOpen
+          dispatch({ type: 'patch', patch: { previewOpen: nextOpen } })
+          const ent = visibleEntries(s)[s.cursor]
+          if (ent) void loadRightPanel(ent, nextOpen)
           prevent()
           break
+        }
         case '?':
           dispatch({ type: 'patch', patch: { helpOpen: true } })
           prevent()

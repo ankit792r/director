@@ -19,6 +19,9 @@ export type AppState = {
   filter: string
   preview: PreviewState
   previewOpen: boolean
+  parentEntries: Entry[]
+  rightEntries: Entry[]
+  rightIsDir: boolean
   status: string
   error: string | null
   commandOpen: boolean
@@ -45,6 +48,9 @@ export const initialState: AppState = {
   filter: '',
   preview: null,
   previewOpen: true,
+  parentEntries: [],
+  rightEntries: [],
+  rightIsDir: false,
   status: '',
   error: null,
   commandOpen: false,
