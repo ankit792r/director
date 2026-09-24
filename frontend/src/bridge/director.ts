@@ -42,25 +42,59 @@ function installDevMock() {
   if (typeof window.directorInvoke === 'function') {
     return
   }
-  window.directorInvoke = async (method, payloadJSON) => {
+  window.directorInvoke = async (method, _payloadJSON) => {
     if (method === 'ping') {
-      let message = ''
-      try {
-        const body = JSON.parse(payloadJSON || '{}') as { message?: string }
-        message = body.message ?? ''
-      } catch {
-        /* ignore */
-      }
-      const result = {
-        message: message ? `pong: ${message} (dev mock)` : 'pong (dev mock)',
-        runtime: 'browser',
-      }
-      queueMicrotask(() => {
-        window.__directorOnEvent?.('director:ready', result)
-      })
+      const result = { message: 'pong (dev mock)', runtime: 'browser' }
       return { ok: true, data: result }
     }
-    return { ok: false, error: `unknown method: ${method}` }
+    if (method === 'homeDir') {
+      return { ok: true, data: { path: '/home/dev' } }
+    }
+    if (method === 'getConfig') {
+      return {
+        ok: true,
+        data: {
+          showHidden: false,
+          sortBy: 'name',
+          sortDesc: false,
+          bookmarks: {},
+          keymapHints: true,
+        },
+      }
+    }
+    if (method === 'listDir') {
+      return {
+        ok: true,
+        data: {
+          path: '/home/dev',
+          parent: '/home',
+          entries: [
+            {
+              name: 'README-dev-mock.txt',
+              path: '/home/dev/README-dev-mock.txt',
+              isDir: false,
+              size: 12,
+              modTime: 0,
+              mode: '-rw-r--r--',
+            },
+          ],
+        },
+      }
+    }
+    if (method === 'readPreview') {
+      return {
+        ok: true,
+        data: {
+          path: '/home/dev/README-dev-mock.txt',
+          kind: 'text',
+          text: 'Dev mock UI — run DIRECTOR_DEV=1 with Go for real FS.',
+        },
+      }
+    }
+    if (method === 'quit') {
+      return { ok: true, data: { ok: true } }
+    }
+    return { ok: false, error: `unknown method: ${method} (dev mock)` }
   }
 }
 
