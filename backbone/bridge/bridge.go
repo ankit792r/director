@@ -34,6 +34,7 @@ func New(w webview.WebView) *Bridge {
 }
 
 // Register adds a named RPC method callable from JavaScript as directorInvoke(method, payloadJSON).
+// Only register handlers explicitly here or in RegisterFS — do not expose arbitrary Go calls.
 func (b *Bridge) Register(method string, h Handler) {
 	b.mu.Lock()
 	defer b.mu.Unlock()
