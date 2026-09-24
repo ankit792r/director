@@ -5,8 +5,6 @@ import (
 	"os"
 	"path/filepath"
 )
-
-// Config is persisted user preferences.
 type Config struct {
 	StartPath   string            `json:"startPath"`
 	ShowHidden  bool              `json:"showHidden"`
@@ -42,6 +40,7 @@ func LoadConfig() (Config, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		if os.IsNotExist(err) {
+			applyStartPathEnv(&cfg)
 			return cfg, nil
 		}
 		return cfg, err
@@ -52,7 +51,16 @@ func LoadConfig() (Config, error) {
 	if cfg.Bookmarks == nil {
 		cfg.Bookmarks = map[string]string{}
 	}
+	applyStartPathEnv(&cfg)
 	return cfg, nil
+}
+
+func applyStartPathEnv(cfg *Config) {
+	if p := os.Getenv("DIRECTOR_START_PATH"); p != "" {
+		if expanded, err := ExpandPath(p); err == nil {
+			cfg.StartPath = expanded
+		}
+	}
 }
 
 // SaveConfig writes config to disk.
