@@ -21,6 +21,7 @@ func OpenUi() {
 	w.SetTitle("Director")
 	w.SetSize(1200, 800, webview.HintNone)
 
+	attachBridge(w)
 
 	url := "http://localhost:5173"
 	if os.Getenv("DIRECTOR_DEV") != "1" {
