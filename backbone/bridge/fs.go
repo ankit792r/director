@@ -6,7 +6,7 @@ import (
 )
 
 func RegisterFS(b *Bridge) {
-	b.Register("list", handleListDir)
+	b.Register("listDir", handleListDir)
 }
 
 func handleListDir(raw json.RawMessage) (any, error) {
