@@ -11,6 +11,7 @@ func attachBridge(w webview.WebView) {
 	b := bridge.New(w)
 	bridge.RegisterDefault(b)
 
+	bridge.RegisterFS(b)
 	// Here we will register other handlers
 
 	if err := b.Attach(); err != nil {
