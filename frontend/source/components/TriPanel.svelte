@@ -9,11 +9,14 @@
     let parentEntries: Entry[] = $derived(appState.parentEntries);
     let centerEntries: Entry[] = $derived(appState.entries);
     let previewEntries: Entry[] = $derived(appState.rightEntries);
+    let highlightPath: string = $derived(appState.cwd);
+    let cursor: number = $derived(appState.cursor);
+    let marked: Set<string> = $derived(appState.marked);
 </script>
 
 <div class="tri-panel">
-    <ParentPane {parentEntries} />
-    <CenterPane {centerEntries} />
+    <ParentPane {parentEntries} {highlightPath} />
+    <CenterPane {centerEntries} {cursor} {marked} />
     <PreviewPane {previewEntries} />
 </div>
 

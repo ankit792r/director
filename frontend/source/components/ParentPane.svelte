@@ -2,11 +2,11 @@
     import type { Entry } from "../types";
     import PanelEntry from "./PanelEntry.svelte";
 
-    let { parentEntries }: { parentEntries: Entry[] } = $props();
+    let { parentEntries, highlightPath }: { parentEntries: Entry[]; highlightPath?: string } = $props();
 </script>
 
 <section class="parent-pane">
-    <PanelEntry entries={parentEntries} variant="parent" />
+    <PanelEntry entries={parentEntries} variant="parent" {highlightPath} />
 </section>
 
 <style>

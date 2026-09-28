@@ -1,5 +1,9 @@
+<script lang="ts">
+    import { appState } from "../states/state.svelte";
+</script>
+
 <div class="path-bar">
-    <span>Some/path/to/some/file.ext</span>
+    <span>{appState.cwd || (appState.loading ? "…" : "")}</span>
 </div>
 
 <style>

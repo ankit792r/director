@@ -2,12 +2,12 @@
     import type { Entry } from "../types";
     import PanelEntry from "./PanelEntry.svelte";
 
-    let { centerEntries }: { centerEntries: Entry[] } = $props();
+    let { centerEntries, cursor = -1, marked }: { centerEntries: Entry[]; cursor?: number; marked?: Set<string> } = $props();
 </script>
 
 
 <section class="center-pane">
-    <PanelEntry entries={centerEntries} variant="center" />
+    <PanelEntry entries={centerEntries} variant="center" {cursor} {marked} />
 </section>
 
 <style>
