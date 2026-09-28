@@ -4,7 +4,6 @@ import (
 	"embed"
 	"fmt"
 	"io/fs"
-	"log"
 	"net"
 	"net/http"
 	"os"
@@ -12,9 +11,10 @@ import (
 	"strings"
 
 	"github.com/abemedia/go-webview"
+	_ "github.com/abemedia/go-webview/embedded"
 )
 
-func OpenUi() {
+func OpenUi() error {
 	w := webview.New(false)
 	defer w.Destroy()
 
@@ -27,13 +27,15 @@ func OpenUi() {
 	if os.Getenv("DIRECTOR_DEV") != "1" {
 		addr, err := loadUi()
 		if err != nil {
-			log.Fatalf("Failed to load static UI: %v", err)
+			return fmt.Errorf("failed to load static UI: %w", err)
 		}
 		url = "http://" + addr
 	}
 
 	w.Navigate(url)
 	w.Run()
+
+	return nil
 }
 
 //go:embed output
