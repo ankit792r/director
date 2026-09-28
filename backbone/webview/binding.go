@@ -1,7 +1,7 @@
 package webview
 
 import (
-	"gtest/backbone/bridge"
+	"director/backbone/bridge"
 	"log"
 
 	"github.com/abemedia/go-webview"
