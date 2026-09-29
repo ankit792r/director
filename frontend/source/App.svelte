@@ -1,16 +1,11 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import PathBar from "./components/PathBar.svelte";
   import StatusBar from "./components/StatusBar.svelte";
   import CommandLine from "./components/CommandLine.svelte";
   import TriPanel from "./components/TriPanel.svelte";
-  import { appState } from "./states/state.svelte";
-  import { openDir } from "./states/openDir";
+  import { useListDir } from "./hooks/useListDir.svelte";
 
-  onMount(() => {
-    const start = appState.config?.startPath || appState.home || "~";
-    void openDir(start);
-  });
+  useListDir();
 </script>
 
 <section class="director">
