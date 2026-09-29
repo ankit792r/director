@@ -4,8 +4,9 @@
   import CommandLine from "./components/CommandLine.svelte";
   import TriPanel from "./components/TriPanel.svelte";
   import { useListDir } from "./hooks/useListDir.svelte";
-
+  import { useKeyInputHandler } from "./hooks/useKeyInput.svelte";
   useListDir();
+  const { handleKeydown } = useKeyInputHandler();
 </script>
 
 <section class="director">
@@ -14,6 +15,9 @@
   <StatusBar />
   <CommandLine />
 </section>
+
+
+<svelte:window onkeydown={handleKeydown} />
 
 <style>
   .director {
