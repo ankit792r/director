@@ -1,7 +1,7 @@
-import { svelte } from '@sveltejs/vite-plugin-svelte'
+import preact from '@preact/preset-vite'
 import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [svelte()],
+  plugins: [preact()],
 })

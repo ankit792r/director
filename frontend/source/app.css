@@ -1,29 +1,118 @@
-:root {
-  color-scheme: dark;
-  --bg: #0f0f10;
-  --panel: #161618;
-  --border: #2a2a2e;
-  --text: #e4e4e7;
-  --muted: #71717a;
-  --accent: #3b82f6;
-  --mark: #1e3a5f;
-  --cursor: #2563eb;
-  --dir: #fca5a5;
-  --file: #a1a1aa;
-  --error: #f87171;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 14px;
+@import "./index.css";
+
+.director {
+    display: grid;
+    grid-template-rows: auto 1fr auto auto;
+    height: 100%;
+    outline: none;
 }
 
-* {
-  box-sizing: border-box;
+.tri-panel {
+    display: grid;
+    grid-template-columns: 2fr 4fr 3fr;
+    min-height: 0;
 }
 
-html,
-body,
-#app {
-  margin: 0;
-  height: 100%;
-  background: var(--bg);
-  color: var(--text);
+.parent-pane,
+.center-pane,
+.preview-pane {
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.center-pane {
+    border-right: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+}
+
+.path-bar {
+    padding: 0.35rem 0.75rem;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.status-bar {
+    padding: 0.35rem 0.75rem;
+    background: var(--panel);
+    border-top: 1px solid var(--border);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.command-line {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.75rem;
+    background: var(--panel);
+    border-top: 1px solid var(--border);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.command-input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+}
+
+.file-list {
+    overflow: auto;
+    margin: 0;
+    padding: 0.25rem 0;
+    list-style: none;
+    flex: 1;
+}
+
+.file-list li {
+    padding: 0.1rem 0.5rem;
+    cursor: default;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.file-list li.cursor {
+    background: var(--cursor);
+    color: #fff;
+}
+
+.file-list li.marked {
+    background: var(--mark);
+}
+
+.file-list li.cursor.marked {
+    outline: 1px solid var(--accent);
+}
+
+.file-list li.parent-current {
+    color: var(--accent);
+}
+
+.file-list .name.dir {
+    color: var(--dir);
+}
+
+.file-list li.cursor .name.dir,
+.file-list li.cursor .name.file {
+    color: inherit;
+}
+
+.file-list .name.file {
+    color: var(--file);
+}
+
+.file-list .meta {
+    color: var(--muted);
 }
