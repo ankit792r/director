@@ -1,3 +1,4 @@
+import type { CSSProperties } from "preact"
 import type { Entry } from "../types/entry"
 
 type PanelEntryProps = {
@@ -9,10 +10,18 @@ type PanelEntryProps = {
     emptyLabel?: string
 }
 
-function rowClass(isCursor: boolean, isMarked: boolean, isParentCurrent: boolean) {
-    return [isCursor && "cursor", isMarked && "marked", isParentCurrent && "parent-current"]
-        .filter(Boolean)
-        .join(" ")
+function rowStyle(isCursor: boolean, isMarked: boolean, isParentCurrent: boolean): CSSProperties {
+    return {
+        ...styles.row,
+        ...(isCursor ? styles.cursorRow : {}),
+        ...(isMarked ? styles.markedRow : {}),
+        ...(isParentCurrent ? styles.parentCurrentRow : {}),
+    }
+}
+
+function nameStyle(isDir: boolean, isCursor: boolean): CSSProperties {
+    if (isCursor) return styles.nameOnCursor
+    return isDir ? styles.nameDir : styles.nameFile
 }
 
 export function PanelEntry({
@@ -33,8 +42,8 @@ export function PanelEntry({
                     const isMarked = marked?.has(ent.path) ?? false
                     const isParentCurrent = variant === "parent" && highlightPath === ent.path
                     return (
-                        <li key={ent.path} style={rowClass(isCursor, isMarked, isParentCurrent)}>
-                            <span style={styles.name}>{ent.name}</span>
+                        <li key={ent.path} style={rowStyle(isCursor, isMarked, isParentCurrent)}>
+                            <span style={nameStyle(ent.isDir, isCursor)}>{ent.name}</span>
                         </li>
                     )
                 })
@@ -43,40 +52,42 @@ export function PanelEntry({
     )
 }
 
-const styles = {
+const styles: Record<string, CSSProperties> = {
     fileList: {
         overflow: "auto",
         margin: "0",
-        padding: "0.25rem 0",
+        padding: "0",
         listStyle: "none",
         flex: 1,
     },
-    meta: {
+    row: {
         padding: "0.1rem 0.5rem",
         cursor: "default",
         whiteSpace: "nowrap",
         overflow: "hidden",
         textOverflow: "ellipsis",
     },
-    name: {
+    meta: {
         padding: "0.1rem 0.5rem",
+        color: "var(--muted)",
     },
-    dir: {
+    nameDir: {
         color: "var(--dir)",
     },
-    file: {
+    nameFile: {
         color: "var(--file)",
     },
-    cursor: {
+    nameOnCursor: {
+        color: "inherit",
+    },
+    cursorRow: {
         background: "var(--cursor)",
         color: "#fff",
     },
-    marked: {
-        background: "var(--marked)",
-        color: "#fff",
+    markedRow: {
+        background: "var(--mark)",
     },
-    parentCurrent: {
-        background: "var(--parentCurrent)",
-        color: "#fff",
+    parentCurrentRow: {
+        color: "var(--accent)",
     },
 }
