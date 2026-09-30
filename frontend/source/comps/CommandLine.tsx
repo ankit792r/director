@@ -1,8 +1,9 @@
 import { useEffect, useRef } from "preact/hooks"
-import { appState, notifyAppState, useAppState } from "../state/appState"
+import { useAppState, useUpdateAppState } from "../state/appState"
 
 export function CommandLine() {
     const { commandOpen, commandValue } = useAppState()
+    const update = useUpdateAppState()
     const inputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
@@ -16,11 +17,11 @@ export function CommandLine() {
             <span>:</span>
             <input
                 ref={inputRef}
+                class="command-input"
                 style={styles.input}
                 value={commandValue}
                 onInput={(e) => {
-                    appState.commandValue = e.currentTarget.value
-                    notifyAppState()
+                    update({ commandValue: e.currentTarget.value })
                 }}
                 spellcheck={false}
                 autocomplete="off"

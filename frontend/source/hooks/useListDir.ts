@@ -1,11 +1,15 @@
 import { useEffect } from "preact/hooks"
 import { listDir } from "../bridge/director/listDir"
-import { appState, notifyAppState, useAppState } from "../state/appState"
+import { useAppState, useUpdateAppState } from "../state/appState"
 import type { Entry } from "../types/entry"
 import type { SortBy } from "../types/state"
 
-let settledPath = ""
+let settledLoadKey = ""
 let requestId = 0
+
+function loadKey(cwd: string, showHidden: boolean, sortBy: SortBy, sortDesc: boolean) {
+    return `${cwd}\0${showHidden}\0${sortBy}\0${sortDesc}`
+}
 
 async function listEntries(
     path: string,
@@ -17,26 +21,24 @@ async function listEntries(
     return reply.entries ?? []
 }
 
-/** Reload the panes whenever `appState.cwd` changes. */
+/** Reload the panes whenever `cwd` changes. */
 export function useListDir() {
-    const { cwd } = useAppState()
+    const { cwd, config, home, showHidden, sortBy, sortDesc } = useAppState()
+    const update = useUpdateAppState()
 
     useEffect(() => {
-        if (!appState.cwd) {
-            appState.cwd = appState.config?.startPath || appState.home || "~"
-            notifyAppState()
+        if (!cwd) {
+            update({ cwd: config?.startPath || home || "~" })
         }
-    }, [])
+    }, [cwd, config, home, update])
 
     useEffect(() => {
-        const path = cwd || appState.cwd
-        if (!path || path === settledPath) return
+        const path = cwd
+        const key = loadKey(path, showHidden, sortBy, sortDesc)
+        if (!path || key === settledLoadKey) return
 
         const id = ++requestId
-        const { showHidden, sortBy, sortDesc } = appState
-        appState.loading = true
-        appState.error = null
-        notifyAppState()
+        update({ loading: true, error: null })
 
         void (async () => {
             try {
@@ -56,27 +58,29 @@ export function useListDir() {
                 if (id !== requestId) return
 
                 const resolved = reply.path || path
-                settledPath = resolved
-                appState.entries = entries
-                appState.parent = reply.parent
-                appState.cursor = entries.length > 0 ? 0 : -1
-                appState.marked = new Set()
-                appState.parentEntries = parentEntries
-                appState.rightEntries = rightEntries
-                appState.rightIsDir = current?.isDir ?? false
-                appState.loading = false
-                if (resolved !== appState.cwd) appState.cwd = resolved
-                notifyAppState()
+                settledLoadKey = loadKey(resolved, showHidden, sortBy, sortDesc)
+                update({
+                    entries,
+                    parent: reply.parent,
+                    cursor: entries.length > 0 ? 0 : -1,
+                    marked: new Set(),
+                    parentEntries,
+                    rightEntries,
+                    rightIsDir: current?.isDir ?? false,
+                    loading: false,
+                    ...(resolved !== path ? { cwd: resolved } : {}),
+                })
             } catch (err) {
                 if (id !== requestId) return
-                appState.error = err instanceof Error ? err.message : String(err)
-                appState.loading = false
-                notifyAppState()
+                update({
+                    error: err instanceof Error ? err.message : String(err),
+                    loading: false,
+                })
             }
         })()
 
         return () => {
             if (id === requestId) requestId++
         }
-    }, [cwd])
+    }, [cwd, showHidden, sortBy, sortDesc, update])
 }

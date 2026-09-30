@@ -1,5 +1,11 @@
-import { render } from 'preact'
-import './index.css'
-import { App } from './app.tsx'
+import { render } from "preact"
+import "./index.css"
+import { App } from "./app.tsx"
+import { AppStateProvider } from "./state/appState"
 
-render(<App />, document.getElementById('app')!)
+render(
+    <AppStateProvider>
+        <App />
+    </AppStateProvider>,
+    document.getElementById("app")!,
+)
