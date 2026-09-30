@@ -1,27 +1,5 @@
-export type Entry = {
-    name: string
-    path: string
-    isDir: boolean
-    size: number
-    modTime: number
-    mode: string
-    linkTarget?: string
-}
-
-export type ListDirResponse = {
-    path: string
-    parent: string
-    entries: Entry[]
-}
-
-export type DirectorConfig = {
-    startPath?: string
-    showHidden: boolean
-    sortBy: "name" | "mtime" | "size"
-    sortDesc: boolean
-    bookmarks: Record<string, string>
-    keymapHints?: boolean
-}
+import type { DirectorConfig } from "./config"
+import type { Entry } from "./entry"
 
 export type ClipboardMode = "copy" | "cut"
 

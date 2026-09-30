@@ -1,4 +1,4 @@
-import type { Entry } from "../types"
+import type { Entry } from "../types/entry"
 import { PanelEntry } from "./PanelEntry"
 
 type CenterPaneProps = {
@@ -9,8 +9,20 @@ type CenterPaneProps = {
 
 export function CenterPane({ centerEntries, cursor = -1, marked }: CenterPaneProps) {
     return (
-        <section class="center-pane">
+        <section style={styles.container}>
             <PanelEntry entries={centerEntries} variant="center" cursor={cursor} marked={marked} />
         </section>
     )
+}
+
+const styles = {
+    container: {
+        minWidth: "0",
+        minHeight: "0",
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+        borderRight: "1px solid var(--border)",
+        borderLeft: "1px solid var(--border)",
+    },
 }

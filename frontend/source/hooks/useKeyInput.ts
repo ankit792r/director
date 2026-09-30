@@ -1,5 +1,5 @@
 import { useEffect } from "preact/hooks"
-import { appState, notifyAppState } from "../state"
+import { appState, notifyAppState } from "../state/appState"
 
 function typingCommand(event: KeyboardEvent) {
     return event.target instanceof HTMLInputElement && event.target.classList.contains("command-input")

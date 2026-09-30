@@ -1,5 +1,5 @@
 import { useEffect, useReducer } from "preact/hooks"
-import type { AppState } from "./types"
+import type { AppState } from "../types/state"
 
 export function createInitialAppState(): AppState {
     return {

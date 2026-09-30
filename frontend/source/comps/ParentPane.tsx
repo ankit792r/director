@@ -1,4 +1,4 @@
-import type { Entry } from "../types"
+import type { Entry } from "../types/entry"
 import { PanelEntry } from "./PanelEntry"
 
 type ParentPaneProps = {
@@ -8,8 +8,18 @@ type ParentPaneProps = {
 
 export function ParentPane({ parentEntries, highlightPath }: ParentPaneProps) {
     return (
-        <section class="parent-pane">
+        <section style={styles.container}>
             <PanelEntry entries={parentEntries} variant="parent" highlightPath={highlightPath} />
         </section>
     )
+}
+
+const styles = {
+    container: {
+        minWidth: "0",
+        minHeight: "0",
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+    },
 }

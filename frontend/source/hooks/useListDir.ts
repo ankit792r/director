@@ -1,7 +1,8 @@
 import { useEffect } from "preact/hooks"
 import { listDir } from "../bridge/director/listDir"
-import { appState, notifyAppState, useAppState } from "../state"
-import type { Entry, SortBy } from "../types"
+import { appState, notifyAppState, useAppState } from "../state/appState"
+import type { Entry } from "../types/entry"
+import type { SortBy } from "../types/state"
 
 let settledPath = ""
 let requestId = 0

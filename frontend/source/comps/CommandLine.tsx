@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "preact/hooks"
-import { appState, notifyAppState, useAppState } from "../state"
+import { appState, notifyAppState, useAppState } from "../state/appState"
 
 export function CommandLine() {
     const { commandOpen, commandValue } = useAppState()
@@ -12,11 +12,11 @@ export function CommandLine() {
     if (!commandOpen) return null
 
     return (
-        <div class="command-line">
+        <div style={styles.container}>
             <span>:</span>
             <input
                 ref={inputRef}
-                class="command-input"
+                style={styles.input}
                 value={commandValue}
                 onInput={(e) => {
                     appState.commandValue = e.currentTarget.value
@@ -27,4 +27,26 @@ export function CommandLine() {
             />
         </div>
     )
+}
+
+const styles = {
+    container: {
+        display: "flex",
+        alignItems: "center",
+        gap: "0.35rem",
+        padding: "0.35rem 0.75rem",
+        background: "var(--panel)",
+        borderTop: "1px solid var(--border)",
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+    },
+    input: {
+        flex: 1,
+        minWidth: "0",
+        border: "none",
+        outline: "none",
+        background: "transparent",
+        color: "inherit",
+        font: "inherit",
+    },
 }

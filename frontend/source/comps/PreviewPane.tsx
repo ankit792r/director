@@ -1,4 +1,4 @@
-import type { Entry } from "../types"
+import type { Entry } from "../types/entry"
 import { PanelEntry } from "./PanelEntry"
 
 type PreviewPaneProps = {
@@ -7,8 +7,18 @@ type PreviewPaneProps = {
 
 export function PreviewPane({ previewEntries }: PreviewPaneProps) {
     return (
-        <section class="preview-pane">
+        <section style={styles.container}>
             <PanelEntry entries={previewEntries} variant="preview" />
         </section>
     )
+}
+
+const styles = {
+    container: {
+    minWidth: "0",
+    minHeight: "0",
+    overflow: "hidden",
+    display: "flex",
+    flexDirection: "column",
+    },
 }
