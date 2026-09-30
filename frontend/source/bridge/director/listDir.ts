@@ -1,4 +1,5 @@
-import type { ListDirResponse, SortBy } from "../../types"
+import type { ListDirResponse } from "../../types/dirlist"
+import type { SortBy } from "../../types/state"
 import { invoke } from "../bridge"
 
 export async function listDir(
@@ -7,5 +8,5 @@ export async function listDir(
     sortBy: SortBy,
     sortDesc: boolean,
 ): Promise<ListDirResponse> {
-    return invoke<ListDirResponse>("list", { path, showHidden, sortBy, sortDesc })
+    return invoke<ListDirResponse>("listDir", { path, showHidden, sortBy, sortDesc })
 }
