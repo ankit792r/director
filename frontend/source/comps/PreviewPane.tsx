@@ -15,10 +15,10 @@ export function PreviewPane({ previewEntries }: PreviewPaneProps) {
 
 const styles = {
     container: {
-    minWidth: "0",
-    minHeight: "0",
-    overflow: "hidden",
-    display: "flex",
-    flexDirection: "column",
+        minWidth: "0",
+        minHeight: "0",
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
     },
 }
