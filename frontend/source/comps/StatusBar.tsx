@@ -1,10 +1,11 @@
 import { useAppState } from "../state/appState"
 
 export function StatusBar() {
-    const { error, loading } = useAppState()
+    const { entries } = useAppState()
+
     return (
         <div style={styles.container}>
-            <span>{error ?? (loading ? "loading" : "")}</span>
+            <span>{entries.length} entries found</span>
         </div>
     )
 }
@@ -12,7 +13,6 @@ export function StatusBar() {
 const styles = {
     container: {
         padding: "0.35rem 0.75rem",
-        background: "var(--bg)",
         whiteSpace: "nowrap",
         overflow: "hidden",
         textOverflow: "ellipsis",

@@ -19,7 +19,6 @@ export function TriPanel() {
 const styles = {
     container: {
     display: "grid",
-    background: "var(--bg)",
     borderBottom: "1px solid var(--border)",
     borderTop: "1px solid var(--border)",
     gridTemplateColumns: "2fr 4fr 3fr",

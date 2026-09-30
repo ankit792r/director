@@ -25,5 +25,6 @@ const styles = {
     gridTemplateRows: "auto 1fr auto auto",
     height: "100%",
     outline: "none",
+    background: "var(--bg)",
     },
 }

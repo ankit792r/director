@@ -35,7 +35,6 @@ const styles = {
         alignItems: "center",
         gap: "0.35rem",
         padding: "0.35rem 0.75rem",
-        background: "var(--bg)",
         borderTop: "1px solid var(--border)",
         whiteSpace: "nowrap",
         overflow: "hidden",

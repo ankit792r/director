@@ -12,7 +12,6 @@ export function PathBar() {
 const styles = {
     container: {
         padding: "0.35rem 0.75rem",
-        background: "var(--bg)",
         whiteSpace: "nowrap",
         overflow: "hidden",
         textOverflow: "ellipsis",
